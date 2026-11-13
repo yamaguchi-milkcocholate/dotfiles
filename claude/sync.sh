@@ -151,7 +151,10 @@ cmd_push() {
   cmd_collect
   if [ -z "$(changed_files)" ]; then
     # コミット済みで未 push のものがあれば送る
-    if [ -n "$(git_ log --oneline '@{u}..' 2>/dev/null)" ]; then git_ push --quiet; fi
+    if [ -n "$(git_ log --oneline '@{u}..' 2>/dev/null)" ]; then
+      git_ push --quiet || { notify_error "git push に失敗しました。~/dotfiles で git push してください"; return 1; }
+      echo "push    （コミット済みのもの）"
+    fi
     return 0
   fi
 
