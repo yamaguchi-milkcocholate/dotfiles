@@ -7,23 +7,8 @@
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "$0")" && pwd)"
-BACKUP="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 
-link() {
-  local src="$DOTFILES/$1" dst="$2"
-  mkdir -p "$(dirname "$dst")"
-  if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
-    echo "ok      $dst"
-    return
-  fi
-  if [ -e "$dst" ] || [ -L "$dst" ]; then
-    mkdir -p "$BACKUP"
-    mv "$dst" "$BACKUP/"
-    echo "backup  $dst -> $BACKUP/"
-  fi
-  ln -s "$src" "$dst"
-  echo "link    $dst -> $src"
-}
+source "$DOTFILES/lib.sh"
 
 echo "== シンボリックリンク =="
 link zsh/.zshrc          "$HOME/.zshrc"
@@ -31,17 +16,32 @@ link zsh/.zprofile       "$HOME/.zprofile"
 link sheldon/plugins.toml "$HOME/.config/sheldon/plugins.toml"
 link mise/config.toml    "$HOME/.config/mise/config.toml"
 
-echo "== mise / sheldon =="
+echo "== Claude Code =="
+# ~/.claude にはキャッシュや会話履歴も入るため、管理するものだけを個別にリンクする
+"$DOTFILES/claude/sync.sh" link
+
+echo "== Git フック =="
+# コミット前に秘密情報が含まれていないかを調べる（githooks/pre-commit）
+git -C "$DOTFILES" config core.hooksPath githooks
+echo "ok      core.hooksPath = githooks"
+
+echo "== Homebrew =="
 if ! command -v brew >/dev/null 2>&1; then
   echo "Homebrew がありません。先に https://brew.sh の手順でインストールしてください。" >&2
   exit 1
 fi
-for f in mise sheldon; do
+# terminal-notifier と jq は Claude Code の通知フック（claude/hooks/notify.sh）で使う
+for f in mise sheldon terminal-notifier jq; do
   command -v "$f" >/dev/null 2>&1 || brew install "$f"
 done
 
 mise install
 sheldon lock
+
+if command -v claude >/dev/null 2>&1; then
+  echo "== Claude Code の MCP =="
+  "$DOTFILES/claude/setup-mcp.sh"
+fi
 
 echo
 echo "完了しました。新しいターミナルを開くと反映されます。"

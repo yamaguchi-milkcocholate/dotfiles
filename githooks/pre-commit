@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# コミットされるファイルに秘密情報が含まれていないかを調べる
+# install.sh が `git config core.hooksPath githooks` で有効にする
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+
+files=()
+while IFS= read -r -d '' f; do files+=("$f"); done \
+  < <(git diff --cached --name-only --diff-filter=ACMR -z)
+[ ${#files[@]} -eq 0 ] && exit 0
+
+if ! claude/check-secrets.sh "${files[@]}"; then
+  echo
+  echo "コミットを中止しました。このリポジトリは公開しています。"
+  echo "問題がないと確認できた場合のみ git commit --no-verify で回避できます。"
+  exit 1
+fi
