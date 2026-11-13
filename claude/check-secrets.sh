@@ -29,10 +29,12 @@ for f in "$@"; do
     fi
   done
   # auto mode の環境情報はプロジェクト固有の内容が入るため、ユーザー設定には置かない
+  # （/auto-mode-setup は承認すると必ず ~/.claude/settings.json に書き込む。
+  #   autoMode はプロジェクトの .claude/settings*.json からは読まれないので、移しても効かない）
   case "$f" in
     *settings.json)
       if jq -e '.autoMode.environment // empty' "$f" >/dev/null 2>&1; then
-        echo "秘密情報の可能性: $f に autoMode.environment があります（プロジェクトの .claude/settings.json に移してください）"
+        echo "秘密情報の可能性: $f に autoMode.environment があります（/auto-mode-setup が書き込んだものです。claude auto-mode reset で消すか、必要なら claude --settings <ファイル> で読み込んでください）"
         found=1
       fi
       ;;
