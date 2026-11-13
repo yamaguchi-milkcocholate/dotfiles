@@ -22,8 +22,7 @@ xcode-select --install   # git などの開発ツール
 
 ```sh
 eval "$(/opt/homebrew/bin/brew shellenv)"
-brew install gh && gh auth login        # private リポジトリなので認証が必要
-gh repo clone yamaguchi-milkcocholate/dotfiles ~/dotfiles
+git clone https://github.com/yamaguchi-milkcocholate/dotfiles.git ~/dotfiles   # GitHub へのログインは不要
 ~/dotfiles/install.sh
 ```
 
@@ -51,7 +50,7 @@ PC ごとに違う設定は、次のファイルに書きます。ファイル�
 | `~/.zprofile.local` | その PC だけの PATH や環境変数 |
 | `~/.config/mise/conf.d/local.toml` | その PC だけで使うツール（`"npm:パッケージ名" = "latest"` など） |
 
-**API キーやトークン、社内の情報はリポジトリにコミットせず、これらのファイルに書いてください。**
+**このリポジトリは公開しています。API キーやトークン、社内の情報はコミットせず、これらのファイルに書いてください。**
 
 ## 日々の操作
 
