@@ -1,0 +1,24 @@
+# sheldon のプラグイン定義
+# 変更したら `sheldon lock --update` を実行する
+
+shell = "zsh"
+
+# 補完の定義を追加する（compinit より前に fpath へ追加する必要がある）
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+apply = ["fpath"]
+
+[plugins.compinit]
+inline = "autoload -Uz compinit && compinit"
+
+# 入力中に、履歴から候補を薄く表示する
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+
+# コマンドを色分けする（history-substring-search より前に読み込む）
+[plugins.zsh-syntax-highlighting]
+github = "zsh-users/zsh-syntax-highlighting"
+
+# 途中まで入力した文字列で履歴を検索する
+[plugins.zsh-history-substring-search]
+github = "zsh-users/zsh-history-substring-search"

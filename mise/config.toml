@@ -1,0 +1,8 @@
+# mise の共通設定（どのPCでも使うツール）
+# このPC専用のツールは ~/.config/mise/conf.d/local.toml に書く（Git管理外）
+# Pythonは uv で管理するため、ここには書かない
+
+[tools]
+node = "24"
+terraform = "1.14"
+uv = "latest"
