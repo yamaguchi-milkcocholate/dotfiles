@@ -6,7 +6,6 @@ in=$(cat)
 ev=$(jq -r '.hook_event_name // ""' <<<"$in")
 proj=$(basename "$(jq -r '.cwd // ""' <<<"$in")")
 sid=$(jq -r '.session_id // ""' <<<"$in")
-jq -c '{t: (now|strflocaltime("%H:%M:%S")), ev: .hook_event_name, type: .notification_type, bg: [.background_tasks[]?.type]}' <<<"$in" >> ~/.claude/hooks/notify-test.log 2>&1
 
 notify() {
   terminal-notifier -title "$1" -subtitle "$proj" -message "$2" \
